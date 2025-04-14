@@ -9,9 +9,9 @@ type Client struct {
 }
 
 type SlackResponse struct {
-	response_type string
-	blocks        []map[string]string
-	text          string
+	ResponseType string              `json:"response_type"`
+	Blocks       []map[string]string `json:"blocks"`
+	Text         string              `json:"text"`
 }
 
 func NewClient() (*Client, error) {
@@ -30,8 +30,8 @@ func (client *Client) Get(code string) SlackResponse {
 
 	if err != nil {
 		return SlackResponse{
-			response_type: "in_channel",
-			text:          fmt.Sprintf("error: %s", err.Error()),
+			ResponseType: "in_channel",
+			Text:         fmt.Sprintf("error: %s", err.Error()),
 		}
 	} else {
 		imgBlock := make(map[string]string)
@@ -41,9 +41,9 @@ func (client *Client) Get(code string) SlackResponse {
 		imgBlock["image_url"] = url
 
 		return SlackResponse{
-			response_type: "in_channel",
-			text:          code,
-			blocks:        []map[string]string{imgBlock},
+			ResponseType: "in_channel",
+			Text:         code,
+			Blocks:       []map[string]string{imgBlock},
 		}
 	}
 }
