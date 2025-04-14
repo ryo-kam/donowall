@@ -1,7 +1,6 @@
 package main
 
 import (
-	"errors"
 	"fmt"
 	"time"
 
@@ -32,7 +31,7 @@ func NewCache() (*EmoteCache, error) {
 }
 
 func (cache *EmoteCache) getEmotes() (EmoteMap, error) {
-	if time.Now().Sub(cache.lastFetched) > 24*time.Hour {
+	if time.Since(cache.lastFetched) > 24*time.Hour {
 		emotes, err := cache.instance.GetEmotes()
 
 		if err != nil {
@@ -49,7 +48,7 @@ func (cache *EmoteCache) getEmotes() (EmoteMap, error) {
 func transformToMap(emotes []gobttv.Emote) EmoteMap {
 	emoteMap := make(EmoteMap)
 
-	for i := 0; i < len(emotes); i++ {
+	for i := range emotes {
 		emoteMap[emotes[i].Code] = emotes[i].URLs.X4
 	}
 
@@ -66,7 +65,7 @@ func (cache *EmoteCache) getEmote(code string) (string, error) {
 	url, ok := emoteMap[code]
 
 	if !ok {
-		return "", errors.New(fmt.Sprintf("No such emote: %s", code))
+		return "", fmt.Errorf("no such emote: %s", code)
 	}
 
 	return url, nil
