@@ -1,12 +1,18 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
+)
 
 type Client struct {
 	cache *EmoteCache
 }
 
-type SlackResponse = map[string]string
+type SlackResponse struct {
+	response_type string
+	blocks        []map[string]string
+	text          string
+}
 
 func NewClient() (*Client, error) {
 	cache, err := NewCache()
@@ -19,17 +25,25 @@ func NewClient() (*Client, error) {
 }
 
 func (client *Client) Get(code string) SlackResponse {
-	jsonResponse := make(SlackResponse)
-	jsonResponse["response_type"] = "ephemeral"
 
 	url, err := client.cache.getEmote(code)
 
 	if err != nil {
-		jsonResponse["text"] = fmt.Sprintf("error: %s", err.Error())
+		return SlackResponse{
+			response_type: "in_channel",
+			text:          fmt.Sprintf("error: %s", err.Error()),
+		}
 	} else {
-		jsonResponse["alt_text"] = code
-		jsonResponse["image_url"] = url
-	}
+		imgBlock := make(map[string]string)
 
-	return jsonResponse
+		imgBlock["type"] = "image"
+		imgBlock["alt_text"] = code
+		imgBlock["image_url"] = url
+
+		return SlackResponse{
+			response_type: "in_channel",
+			text:          code,
+			blocks:        []map[string]string{imgBlock},
+		}
+	}
 }
