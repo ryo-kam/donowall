@@ -6,14 +6,16 @@ import (
 	"net/http"
 	"os"
 
+	"github.com/joho/godotenv"
 	"github.com/slack-go/slack"
 )
 
-const slashCommand = "/hello"
+const slashCommand = "/donowall"
 
 func slashCommandHandler() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		s, err := slack.SlashCommandParse(r)
+
 		if err != nil {
 			w.WriteHeader(http.StatusInternalServerError)
 			return
@@ -49,13 +51,12 @@ func slashCommandHandler() http.HandlerFunc {
 }
 
 func main() {
-
-	println("Hello world")
+	godotenv.Load(".env")
 
 	http.HandleFunc("/receive", slashCommandHandler())
 
-	// Determine port for HTTP service.
 	port := os.Getenv("PORT")
+
 	if port == "" {
 		port = "8080"
 		log.Printf("PORT environment variable not found defaulting to port %s", port)
