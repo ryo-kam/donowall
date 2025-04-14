@@ -2,19 +2,17 @@ package main
 
 import (
 	"encoding/json"
-	"fmt"
 	"log"
 	"net/http"
 	"os"
 
 	"github.com/joho/godotenv"
-	"github.com/pajlada/gobttv"
 	"github.com/slack-go/slack"
 )
 
 const slashCommand = "/donowall"
 
-func slashCommandHandler(bttv *gobttv.BTTVAPI) http.HandlerFunc {
+func slashCommandHandler(client *Client) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		s, err := slack.SlashCommandParse(r)
 
@@ -31,35 +29,22 @@ func slashCommandHandler(bttv *gobttv.BTTVAPI) http.HandlerFunc {
 		switch s.Command {
 		case slashCommand:
 			log.Printf("%s slack command is issued\n", slashCommand)
-			// Add code here!
-			response := "Hello World!"
+
 			params := &slack.Msg{Text: s.Text}
-			text := params.Text
-			emotes, err := bttv.GetEmotes()
 
-			if err != nil {
-				w.WriteHeader(http.StatusInternalServerError)
-				return
-			}
-
-			emoteJson, err := json.Marshal(emotes)
-
-			if err != nil {
-				w.WriteHeader(http.StatusInternalServerError)
-				return
-			}
+			code := params.Text
+			jsonResponse := client.Get(code)
 
 			// Create a JSON response
 			w.Header().Set("Content-Type", "application/json")
-			jsonResponse := make(map[string]string)
-			jsonResponse["response_type"] = "ephemeral"
-			jsonResponse["text"] = fmt.Sprintf("%s : %s\n%s", response, text, emoteJson)
+
 			jsonResponseMarshal, err := json.Marshal(jsonResponse)
+
 			if err != nil {
 				log.Fatalf("error while JSON marshalling response: %s", err)
 			}
 
-			w.Write([]byte(jsonResponseMarshal))
+			w.Write(jsonResponseMarshal)
 
 		default:
 			w.WriteHeader(http.StatusInternalServerError)
@@ -71,9 +56,13 @@ func slashCommandHandler(bttv *gobttv.BTTVAPI) http.HandlerFunc {
 func main() {
 	godotenv.Load(".env")
 
-	bttv := gobttv.New()
+	client, err := NewClient()
 
-	http.HandleFunc("/receive", slashCommandHandler(bttv))
+	if err != nil {
+		log.Fatal("Failed to initialise client")
+	}
+
+	http.HandleFunc("/receive", slashCommandHandler(client))
 
 	port := os.Getenv("PORT")
 
@@ -86,5 +75,4 @@ func main() {
 	if err := http.ListenAndServe(":"+port, nil); err != nil {
 		log.Fatal(err)
 	}
-
 }
