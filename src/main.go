@@ -50,6 +50,8 @@ func slashCommandHandler() http.HandlerFunc {
 
 func main() {
 
+	println("Hello world")
+
 	http.HandleFunc("/receive", slashCommandHandler())
 
 	// Determine port for HTTP service.
