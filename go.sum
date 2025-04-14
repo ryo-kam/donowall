@@ -1,3 +1,5 @@
+github.com/dankeroni/jsonapi v0.0.0-20160914195301-7aa17e21f323 h1:1QXbR5XxivdKNhvqGvYboHlFGPFEuF38oW8LMmtsz6Y=
+github.com/dankeroni/jsonapi v0.0.0-20160914195301-7aa17e21f323/go.mod h1:erSjIHOb3O9IOadpkJt+GFxLcqcZXqWWZUWyhmAufKM=
 github.com/davecgh/go-spew v1.1.1/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
 github.com/go-test/deep v1.0.4/go.mod h1:wGDj63lr65AM2AQyKZd/NYHGb0R+1RLqB8NKt3aSFNA=
 github.com/google/go-cmp v0.5.7/go.mod h1:n+brtR0CgQNWTVd5ZUFpTBC8YFBDLK/h/bpaJ8/DtOE=
@@ -5,6 +7,8 @@ github.com/gorilla/websocket v1.4.2 h1:+/TMaTYc4QFitKJxsQ7Yye35DkWvkdLcvGKqM+x0U
 github.com/gorilla/websocket v1.4.2/go.mod h1:YR8l580nyteQvAITg2hZ9XVh4b55+EU/adAjf1fMHhE=
 github.com/joho/godotenv v1.5.1 h1:7eLL/+HRGLY0ldzfGMeQkb7vMd0as4CfYvUVzLqw0N0=
 github.com/joho/godotenv v1.5.1/go.mod h1:f4LDr5Voq0i2e/R5DDNOoa2zzDfwtkZa6DnEwAbqwq4=
+github.com/pajlada/gobttv v1.0.0 h1:wkQrEeBM0liLKSWhEC11BbT1mAr+LW4+50KzEhMB5Gk=
+github.com/pajlada/gobttv v1.0.0/go.mod h1:J2A6ZSOOw6Qn5vsNXRBtShJH4HBsH9h4sgA+Q5XWk7Q=
 github.com/pmezard/go-difflib v1.0.0/go.mod h1:iKH77koFhYxTK1pcRnkKkqfTogsbg7gZNVY4sRDYZ/4=
 github.com/slack-go/slack v0.16.0 h1:khp/WCFv+Hb/B/AJaAwvcxKun0hM6grN0bUZ8xG60P8=
 github.com/slack-go/slack v0.16.0/go.mod h1:hlGi5oXA+Gt+yWTPP0plCdRKmjsDxecdHxYQdlMQKOw=
