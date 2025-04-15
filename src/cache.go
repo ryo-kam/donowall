@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"sync"
 	"time"
 
 	"github.com/pajlada/gobttv"
@@ -13,6 +14,7 @@ type EmoteCache struct {
 	instance    *gobttv.BTTVAPI
 	lastFetched time.Time
 	emotesCache EmoteMap
+	sync.Mutex
 }
 
 func NewCache() (*EmoteCache, error) {
@@ -30,19 +32,35 @@ func NewCache() (*EmoteCache, error) {
 	}, nil
 }
 
-func (cache *EmoteCache) getEmotes() (EmoteMap, error) {
-	if time.Since(cache.lastFetched) > 24*time.Hour {
+func (cache *EmoteCache) getEmote(code string) (string, error) {
+	cache.Lock()
+	isStale := time.Since(cache.lastFetched) > 24*time.Hour
+	cache.Unlock()
+
+	if isStale {
 		emotes, err := cache.instance.GetEmotes()
 
 		if err != nil {
-			return nil, err
+			return "", err
 		}
 
-		cache.emotesCache = transformToMap(emotes)
+		cacheMap := transformToMap(emotes)
+
+		cache.Lock()
+		cache.emotesCache = cacheMap
 		cache.lastFetched = time.Now()
+		cache.Unlock()
 	}
 
-	return cache.emotesCache, nil
+	cache.Lock()
+	url, ok := cache.emotesCache[code]
+	cache.Unlock()
+
+	if !ok {
+		return "", fmt.Errorf("no such emote: %s", code)
+	}
+
+	return url, nil
 }
 
 func transformToMap(emotes []gobttv.Emote) EmoteMap {
@@ -53,20 +71,4 @@ func transformToMap(emotes []gobttv.Emote) EmoteMap {
 	}
 
 	return emoteMap
-}
-
-func (cache *EmoteCache) getEmote(code string) (string, error) {
-	emoteMap, err := cache.getEmotes()
-
-	if err != nil {
-		return "", err
-	}
-
-	url, ok := emoteMap[code]
-
-	if !ok {
-		return "", fmt.Errorf("no such emote: %s", code)
-	}
-
-	return url, nil
 }
