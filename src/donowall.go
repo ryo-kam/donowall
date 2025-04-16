@@ -18,7 +18,7 @@ type SlackResponse struct {
 	Blocks          []any  `json:"blocks"`
 }
 
-func donowallHandler(httpClient *http.Client, bttvClient *BttvClient) socketmode.SocketmodeHandlerFunc {
+func donowallHandler(bttvClient *BttvClient) socketmode.SocketmodeHandlerFunc {
 	return func(event *socketmode.Event, slackClient *socketmode.Client) {
 		cmd, ok := event.Data.(slack.SlashCommand)
 

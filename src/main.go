@@ -3,10 +3,8 @@ package main
 import (
 	"fmt"
 	"log"
-	"net/http"
 	"os"
 	"strings"
-	"time"
 
 	"github.com/slack-go/slack/socketmode"
 
@@ -49,8 +47,6 @@ func main() {
 		socketmode.OptionLog(log.New(os.Stdout, "socketmode: ", log.Lshortfile|log.LstdFlags)),
 	)
 
-	httpClient := http.Client{Timeout: 50 * time.Millisecond}
-
 	bttvClient, err := NewBttvClient()
 
 	if err != nil {
@@ -59,7 +55,7 @@ func main() {
 
 	socketmodeHandler := socketmode.NewSocketmodeHandler(slackClient)
 
-	socketmodeHandler.HandleSlashCommand("/donowall", donowallHandler(&httpClient, bttvClient))
+	socketmodeHandler.HandleSlashCommand("/donowall", donowallHandler(bttvClient))
 
 	socketmodeHandler.RunEventLoop()
 }
